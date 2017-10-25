@@ -1,0 +1,87 @@
+#lang racket
+(require math)
+(require math/base)
+(require srfi/1)
+;input x y
+
+;直交座標系の原点
+(define lo0 0)
+(define la0 0)
+(define la (+ kai (* p (sigma 1 6 (lambda (j) (d j) (sin (* 2 j kai)))))))
+(define lo (+ lo0 (atan (/ (sinh nyu) (cos psi)))))
+
+;秒単位
+(define p (* 3600 (/ 180 pi)))
+
+(define kai (asin (/ (sin psi) (cosh nyu))))
+(define (sigma i j func)
+  (apply + (map func (iota j i 1))))
+(define (d j)
+  (cond ((= j 1)
+         (-
+         (+
+         (+
+         (-
+         (- (* 2 n) (* (/ 2 3) (pow n 3)))
+         (* 2 (pow n 3)))
+         (* (/ 116 45) (pow n 4)))
+         (* (/ 26 45) (pow n 5)))
+         (* (/ 2854 675) (pow n 6))))
+        ((= j 2)
+         (+
+         (+
+         (-
+         (- (* (/ 7 3) (pow n 2)) (* (/ 8 5) (pow n 3)))
+         (* (/ 227 45) (pow n 4)))
+         (* (/ 2704 315) (pow n 5)))
+         (* (/ 2323 945) (pow n 6))))
+        ((= j 3)
+         (+
+         (-
+         (- (* (/ 56 15) (pow n 3)) (* (/ 136 35) (pow n 4)))
+         (* (/ 1262 105) (pow n 5)))
+         (* (/ 73814 2835) (pow n 6))))
+        ((= j 4)
+         (-
+         (- (* (/ 4279 630) (pow n 4)) (* (/ 332 35) (pow n 5)))
+         (* (/ 399572 14175) (pow n 6))))
+        ((= j 5)
+         (- (* (/ 4174 315) (pow n 5)) (* (/ 144838 6237) (pow n 6))))
+        ((= j 6)
+         (* (/ 601676 22275) (pow n 6)))))
+(define n (/ 1 (- (* 2 F) 1)))
+(define psi-0 (/ (+ x Sphi) A))
+(define nyu-0 (/ y A))
+
+(define psi (- psi-0
+               (sigma 1 5
+                      (lambda (j) (* (b j)
+                                     (sin (* 2 j psi-0))
+                                     (cosh (* 2 j nyu-0)))))))
+(define nyu (- nyu-0
+               (sigma 1 5
+                      (lambda (j) (* (b j)
+                                     (cos (* 2 j psi-0))
+                                     (sinh (* 2 j nyu-0)))))))
+(define theta (- 1
+               (sigma 1 5
+                      (lambda (j) (* 2
+                                     j
+                                     (b j)
+                                     (cos (* 2 j psi-0))
+                                     (cosh (* 2 j nyu-0)))))))         
+(define tau (- 1
+               (sigma 1 5
+                      (lambda (j) (* 2
+                                     j
+                                     (b j)
+                                     (sin (* 2 j psi-0))
+                                     (sinh (* 2 j nyu-0)))))))
+(define F (/ 1 298.257222101))
+(define a 6378137)
+
+
+;util
+(define(pow x n)
+  (apply * (make-list n x)))
+      
