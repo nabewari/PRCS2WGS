@@ -6,15 +6,15 @@
 (define x 11573.375)
 (define y 22694.980)
 ;直交座標系の原点
-(define lo0 (degrees->radians 139.5000))
-(define la0 (degrees->radians 36.0000))
+(define lo0 0)
+(define la0 0)
 ;他のパラメータ
-(define F 298.257222101)
+(define F (/ 1 298.257222101))
 (define alfa 6378137)
 (define m0 0.9999)
 (define n (/ 1 (- (* 2 F) 1)))
 ;秒単位
-;(define p (/ 180 pi))
+(define p (* 3600 (/ 180 pi)))
 
 ;utils
 (define(pow x n)
@@ -99,7 +99,7 @@
          (* (/ 4583 161280) (pow n 5)))))
 
 ;有象無象の計算
-(define Sphi (* (/ (* m0 alfa) (+ 1 n)) (+ (* (A 0) la0)
+(define Sphi (* (/ (* m0 alfa) (+ 1 n)) (+ (* (A 0) (/ la0 p))
                                            (sigma 1 5
                                                   (lambda (j)
                                                     (* (A j) (sin (* 2 j la0))))))))
@@ -125,18 +125,17 @@
                                      (b j)
                                      (cos (* 2 j psi-0))
                                      (cosh (* 2 j nyu-0)))))))         
-(define tau   (sigma 1 5
-                    (lambda (j) (* 2
-                                   j
-                                   (b j)
-                                   (sin (* 2 j psi-0))
-                                   (sinh (* 2 j nyu-0))))))
+(define tau (- 1
+               (sigma 1 5
+                      (lambda (j) (* 2
+                                     j
+                                     (b j)
+                                     (sin (* 2 j psi-0))
+                                     (sinh (* 2 j nyu-0)))))))
                                                                 
 
 (define kai (asin (/ (sin psi) (cosh nyu))))
 
 ;経度緯度
-(define la-rad (+ kai (sigma 1 6 (lambda (j) (* (d j) (sin (* 2 j kai)))))))
-(define lo-rad (+ lo0 (atan (/ (sinh nyu) (cos psi)))))
-(define la (radians->degrees la-rad))
-(define lo (radians->degrees lo-rad))
+(define la (+ kai (* p (sigma 1 6 (lambda (j) (d j) (sin (* 2 j kai)))))))
+(define lo (+ lo0 (atan (/ (sinh nyu) (cos psi)))))
